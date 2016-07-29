@@ -1,0 +1,70 @@
+#!/bin/bash
+PRODUCT_WSO2="wso2is"
+VERSION_WSO2="5.1.0"
+HOME="/home/vagrant"
+RUNTIME_WSO2=$HOME/wso2-dockerfiles-1.0.0/$PRODUCT_WSO2
+CONTAINER_NAME=$PRODUCT_WSO2-"default"
+
+function check_if_process_is_running {
+ 
+ INSTANCES=$(docker ps -a -f="name=$CONTAINER_NAME" -f="status=running"  | awk "NR > 1  {print $1}" | wc -l)
+ 
+ if [ $INSTANCES -eq 0 ]
+ then
+     return 1
+ else
+     return 0
+ fi
+}
+ 
+case "$1" in
+  status)
+    if check_if_process_is_running
+    then
+      echo $CONTAINER_NAME" is running"
+    else
+      echo "Container not running: $CONTAINER_NAME"
+    fi
+    ;;
+  stop)
+    if ! check_if_process_is_running
+    then
+      echo "Container Docker $CONTAINER_NAME already stopped"
+      exit 0
+    fi
+    sudo $RUNTIME_WSO2/stop.sh -v $VERSION_WSO2
+    echo -ne "Waiting for container to stop"
+    NOT_KILLED=1
+    for i in {1..20}; do
+      if check_if_process_is_running
+      then
+        echo -ne "."
+        sleep 1
+      else
+        NOT_KILLED=0
+      fi
+    done
+    echo
+    if [ $NOT_KILLED = 1 ]
+    then
+      echo "Cannot stop container $CONTAINER_NAME"
+      exit 1
+    fi
+    echo "Container stopped"
+    ;;
+  start)
+    if check_if_process_is_running
+    then
+      echo "Container $CONTAINER_NAME already running"
+      exit 1
+    fi
+    sudo $RUNTIME_WSO2/run.sh -v $VERSION_WSO2
+    echo "Container Docker started"
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status}"
+    exit 1
+esac
+ 
+exit 0
+
