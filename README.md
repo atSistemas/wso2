@@ -1,7 +1,6 @@
-# atSistemas Información plataforma WSO2
-WSO2 Dockerfiles define the resources and instructions to build the Docker images with the WSO2 products and runtime configurations.
+# atSistemas InformaciÃ³n plataforma WSO2
 
-## Descripción
+## DescripciÃ³n
 
-En este repositorio dispones de la información analizada por la Oficina Técnica de atSistemas referente a la plataforma WSO2
+En este repositorio dispones de la informaciÃ³n analizada por la Oficina TÃ©cnica de atSistemas referente a la plataforma WSO2
 
